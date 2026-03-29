@@ -24,6 +24,24 @@ devops-pipeline-assignment/
 
 ---
 
+## Prerequisites
+
+Before you start, make sure you have these installed on your machine:
+
+| Tool | Purpose | Check if installed |
+|---|---|---|
+| Git | Version control | `git --version` |
+| Python 3.9+ | Run app locally | `python --version` |
+| Docker Desktop | Build and run containers | `docker --version` |
+| Terraform | Infrastructure as Code | `terraform --version` |
+
+Install links:
+- Git: https://git-scm.com/downloads
+- Python: https://www.python.org/downloads
+- Docker Desktop: https://www.docker.com/products/docker-desktop
+- Terraform: https://developer.hashicorp.com/terraform/install
+
+---
 
 ## Part 1 — Run the App Locally (No Docker)
 
@@ -31,7 +49,7 @@ This confirms the app works before touching Docker or CI.
 
 **Step 1: Clone the repository**
 ```bash
-https://github.com/karthikmayara/Tummoc-DevOps-Assignment.git
+git clone https://github.com/<your-username>/devops-pipeline-assignment.git
 cd devops-pipeline-assignment
 ```
 
@@ -158,6 +176,66 @@ docker compose logs
 ```bash
 docker compose down
 ```
+
+---
+
+## Part 4 — Set Up the CI/CD Pipeline (GitHub Actions)
+
+The pipeline runs automatically on every push to `main`. Here is how to set it up.
+
+**Step 1: Create a GitHub repository**
+
+Go to https://github.com/new and create a new repository named `devops-pipeline-assignment`.
+
+**Step 2: Push your code to GitHub**
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/<your-username>/devops-pipeline-assignment.git
+git push -u origin main
+```
+
+**Step 3: Watch the pipeline run**
+
+1. Go to your repository on GitHub
+2. Click the **Actions** tab
+3. You will see a workflow called **CI/CD Pipeline** running
+
+**Step 4: Understand what each step does**
+
+| Step | What it runs | What it checks |
+|---|---|---|
+| Checkout | `actions/checkout@v3` | Downloads your code onto the runner |
+| Setup Python | `actions/setup-python@v4` | Installs Python 3.9 on the runner |
+| Install Dependencies | `pip install` | Installs Flask + pytest + flake8 |
+| Lint | `flake8` | Fails if there are syntax or import errors |
+| Run Tests | `pytest` | Fails if any test fails |
+| Build Docker Image | `docker build` | Fails if Dockerfile has errors |
+| Mock Deploy | `echo` | Simulates a deploy (prints a message) |
+
+**Step 5: Trigger the pipeline again**
+
+Make any small change and push:
+```bash
+echo "# test" >> README.md
+git add .
+git commit -m "Trigger CI"
+git push
+```
+
+Go to the Actions tab and watch it run again.
+
+**Step 6: See what a failed pipeline looks like (optional)**
+
+Introduce a deliberate error in `app.py`:
+```python
+undefined_variable  # add this line anywhere
+```
+
+Push it. The **Lint** step will fail and the pipeline stops. Fix it and push again — it goes green.
+
 ---
 
 ## Part 5 — Terraform (Mock Infrastructure)
@@ -205,6 +283,91 @@ Type `yes` when prompted.
 ```bash
 cd ..
 ```
+
+---
+
+## Quick Reference — All Commands
+
+```bash
+# Run app locally
+python app.py
+
+# Run tests
+pytest
+
+# Run linter
+flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+# Docker: build image
+docker build -t sample-web-app:latest .
+
+# Docker: run container
+docker run -p 5000:5000 sample-web-app:latest
+
+# Docker Compose: start
+docker compose up
+
+# Docker Compose: start in background
+docker compose up -d
+
+# Docker Compose: stop
+docker compose down
+
+# Terraform: initialise
+cd terraform && terraform init
+
+# Terraform: preview changes
+terraform plan
+
+# Terraform: apply changes
+terraform apply
+```
+
+---
+
+## Troubleshooting
+
+**Port 5000 already in use**
+```bash
+# On Mac/Linux:
+lsof -i :5000
+# On Windows:
+netstat -ano | findstr :5000
+```
+Kill that process, or change the port in `app.py` and `docker-compose.yml` to `5001`.
+
+**Docker build fails**
+
+Make sure Docker Desktop is running. Check with:
+```bash
+docker info
+```
+
+**pytest: ModuleNotFoundError**
+
+You are probably not in the virtual environment. Run:
+```bash
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
+```
+
+**GitHub Actions fails on the lint step**
+
+Run flake8 locally first to see the errors:
+```bash
+flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+```
+Fix the errors, then push again.
+
+**Terraform init fails**
+
+Make sure Terraform is installed:
+```bash
+terraform --version
+```
+If not installed, download from https://developer.hashicorp.com/terraform/install
+
+---
 
 ## Self-Assessment
 
