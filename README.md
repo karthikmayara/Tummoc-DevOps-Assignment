@@ -63,3 +63,16 @@ It demonstrates what the infrastructure would look like.
 **Step 5 — Clean up**
 
 ---
+
+## Self-Assessment
+
+Rating scale: 0 = No experience, 1 = Beginner, 2 = Familiar, 3 = Comfortable, 4 = Proficient, 5 = Expert
+
+| Tool / Area | Rating (out of 5) | Comments / Example Projects |
+|---|---|---|
+| CI/CD (GitHub Actions, Jenkins) | 3 | Worked in projects to automate the pipelines. |
+| Docker | 1 | |
+| Kubernetes | 1 | |
+| Terraform / Ansible | 1 | |
+| Monitoring Tools (Prometheus, Grafana, ELK) | 0 | |
+| Git | 3 | Regularly use it to push code to remote repositories. |
